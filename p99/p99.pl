@@ -230,3 +230,7 @@ decode([H|T], [H|Xt]):-
 	\+ is_list(H),
 	decode(T, Xt).
 
+
+/*	P13
+
+
