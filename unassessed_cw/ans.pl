@@ -87,7 +87,9 @@ shorter(X, Y, P):-
 %-------------Q2(i)-------------------------------------------------%
 subList([], L2).
 subList([X|Y], L2) :- 
+	% if can appened anything L1 with [X|Z] to make L2
 	append(L1, [X|Z], L2),
+	% continue to next
 	subList(Y, Z).
 
 %-------------Q2(ii)----------------------------------------------------------------%

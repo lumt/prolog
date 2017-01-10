@@ -59,11 +59,11 @@ hubs(H):-
 get_all_nodes(L):-
 	setof(X, N^(arc(X, N); arc(N, X)), L).
 
-% possible places you can go from N
+% L is the possible places you can go from N
 destinations(N, L):-
 	setof(X, path(N, X), L).
 
-% path
+% paths from X to Y
 path(X, Y):-
 	arc(X, Y).
 
@@ -72,8 +72,8 @@ path(X, Y):-
 	path(Z, Y).
 
 % ideal(N) gets list of all nodes within the graph
-% then gets list of all nodes you can go to
-% see if node can get there
+% then gets list of all nodes you can go to (destinations) in graph
+% see if node can get there by matching L_to
 ideal(N):-
 	get_all_nodes(L_all),
 	setof(X, N1^arc(N1, X), L_to),
@@ -81,12 +81,14 @@ ideal(N):-
 	destinations(N, L_to).
 
 
+% solution
 node(X) :-
 	arc(X,Y) ; arc(Y, X).
 
 idealANS(X) :-
 	node(X),
 	\+ (node(Y), X \= Y, \+ path(X,Y)).
+	% there does not exist(another node Y where X cant get to)
 
 /* shortest_path(N1, N2,P)
 	to mean P is a shortest path from node N1 to node N2.
@@ -113,12 +115,17 @@ path(N1, N2, [N1|T]):-
 
 % smallestList(L, Ls)
 % L is the list with the smallest length in list of lists Ls.
+% base case if one list in it return the list
 smallestList(L, [L]).
+
+% if length(H1) < length(H2) keep smalller one
 smallestList(L, [H1, H2|T]):-
 	length(H1, L1),
 	length(H2, L2),
 	L1 < L2,
 	smallestList(L, [H1|T]).
+
+% if length(H1) > length(H2) keep smaller one
 smallestList(L, [H1, H2|T]):-
 	length(H1, L1),
 	length(H2, L2),
@@ -145,9 +152,14 @@ shortest_path(N1, N2, P):-
    X = [], X = [1], X = [1,2], X = [1,2,3], X = [1,3], X = [2], X = [2,3], X = [3].
    */
 
+% base case, empty list is a sublist of anything
 subList([], _).
+
+% if heads are the same, proceed with both tails
 subList([H|T1], [H|T2]):-
 	subList(T1, T2).
+
+% if heads are different, proceed with the bigger list L2 
 subList([H1|T1], [H2|T2]):-
 	subList([H1|T1], T2),
 	H1 \= H2.

@@ -231,6 +231,159 @@ decode([H|T], [H|Xt]):-
 	decode(T, Xt).
 
 
-/*	P13
+/*	P14
+	Duplicate the elements of a list.
+	Example:
+	?- dupli([a,b,c,c,d],X).
+	X = [a,a,b,b,c,c,c,c,d,d]
+	*/
+
+dupli([], []).
+dupli([X|T], [X, X|T1]):-
+	dupli(T, T1).
+
+/*
+	p15
+	Duplicate the elements of a list a given number of times.
+	 dupliN([a,b,c],3,X).
+	X = [a,a,a,b,b,b,c,c,c]
+*/
+
+dupliN(L1, N, L2):-
+	copies(L1, N, L2, N).
+
+copies([], _, [], _).
+copies([_|T], N, L, 0):-
+	copies(T, N, L, N).
+copies([E|T], N, [E|T1], K):-
+	K > 0,
+	K1 is K - 1,
+	copies([E|T], N, T1, K1).
+
+/*
+	p16
+	drop every N'th element from list
+	?- drop([a,b,c,d,e,f,g,h,i,k],3,X).
+	X = [a,b,d,e,g,h,k]
+	*/
+
+drop(L1,N,L2):-
+	drop(L1,N,L2,1).
+
+drop([], _, [], _).
+drop([_|T], N, L2, N):-
+	drop(T, N, L2, 1).
+drop([H|T], N, [H|T2], M):-
+	M < N,
+	M1 is M + 1,
+	drop(T, N, T2, M1).
+
+
+/*
+	p17
+	split lists into two parts
+	Example:
+	?- split([a,b,c,d,e,f,g,h,i,k],3,L1,L2).
+	L1 = [a,b,c]
+	L2 = [d,e,f,g,h,i,k]
+*/
+
+split(L2, 0, [], L2).
+split([H|T], N, [H|T1], L2):-
+	N > 0,
+	N1 is N - 1,
+	split(T, N1, T1, L2).
+
+
+/*
+	p18
+	extract slice from a list
+	Example:
+	?- slice([a,b,c,d,e,f,g,h,i,k],3,7,L).
+	X = [c,d,e,f,g]
+*/
+
+slice(L1, I, K, L):-
+	slice(L1, I, K, 1, L).
+
+slice(_, _, K, C, []):-
+	C > K.
+
+slice([_|L1], I, K, C, L):-
+	C < I, C > 0,
+	C1 is C + 1,
+	slice(L1, I, K, C1, L).
+
+slice([H|L1], I, K, C, [H|L]):-
+	C >= I, C =< K,
+	C1 is C + 1,
+	slice(L1, I, K, C1, L).
+
+
+
+/*
+	p19
+	Rotate a list N places to the left.
+	?- rotate([a,b,c,d,e,f,g,h],3,X).
+	X = [d,e,f,g,h,a,b,c]
+
+	?- rotate([a,b,c,d,e,f,g,h],-2,X).
+	X = [g,h,a,b,c,d,e,f]
+*/
+
+rotate(L, N, X):-
+	N > 0,
+	split(L, N, L1, L2),
+	append(L2, L1, X).
+
+rotate(L, N, X):-
+	N < 0,
+	length(L, Len),
+	N1 is Len + N,
+	rotate(L, N1, X).
+
+/*
+	p20
+	remove K'th element from list
+	?- remove_at(X,[a,b,c,d],2,R).
+	X = b
+	R = [a,c,d]
+*/
+
+remove_at(X, [X|T], 1, T).
+remove_at(X, [H|T], N, [H|T1]):-
+	N > 1,
+	N1 is N - 1,
+	remove_at(X, T, N1, T1).
+
+
+/*
+	p21
+	Insert an element at a given position into a list.
+	Example:
+	?- insert_at(alfa,[a,b,c,d],2,L).
+	L = [a,alfa,b,c,d]
+*/
+
+insert_at(X, L, N, R):-
+	remove_at(X, R, N, L).
+
+/*
+	p22
+	create list containing all integers within a given range
+	Example:
+	?- range(4,9,L).
+	L = [4,5,6,7,8,9]
+*/
+
+range(M, M, [M]).
+range(N, M, [N|T]):-
+	N < M,
+	N1 is N + 1,
+	range(N1, M, T).
+
+
+
+
 
 

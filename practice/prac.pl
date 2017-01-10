@@ -88,9 +88,22 @@ unique([H|T1], Out):-
 	unique(T1, Out).
 
 
-common(L1, L2, I):-
+common1(L1, L2, I):-
 	findall(E, (member(E, L1), member(E, L2)), I1),
 	unique(I1, I).
+
+
+% OR
+common(L1, L2, I):-
+	findall(E, (member(E,L1), member(E, L2)), X),
+	length(X, Xlen),
+	Xlen > 0,
+	setof(E1, member(E1, X), I).
+
+common(L1, L2, []):-
+	findall(E, (member(E,L1), member(E, L2)), X),
+	length(X, Xlen),
+	Xlen == 0.
 
 
 % 5.
@@ -101,6 +114,7 @@ common(L1, L2, I):-
 	*/
 
 delete([], []).
+delete([X], [X]).
 delete([H1, _|T1], [H1|T2]):-
 	delete(T1, T2).
 
@@ -190,8 +204,10 @@ enrolment(L, Student, Degree):-
 	*/
 
 student_list(L, MEng, MSc):-
-	findall(S, (member((Degree, LS), L), member(S, LS), Degree = meng), MEng),
-	findall(S, (member((Degree, LS), L), member(S, LS), Degree = msc), MSc).
+	student_list(L, MEng, MSc):-
+	findall(S, (member((meng, Ss), L), member(S, Ss)), MEng),
+	findall(S, (member((msc, Ss), L), member(S, Ss)), MSc).
+
 
 
 
